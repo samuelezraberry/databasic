@@ -1,5 +1,5 @@
 # databasic
-_Simple, light weight, and versatile data management system for Python_
+_Simple, light weight, and versatile data saving system for Python_
 
 ---
 

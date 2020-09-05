@@ -1,9 +1,4 @@
 import os
-import matplotlib.colors as mplc
-import matplotlib.pyplot as plt
-import random
-import math
-import numpy as np
 class table:
     def __init__(self, table_name):
         self.tabe_name=table_name
@@ -51,21 +46,6 @@ class table:
         with open(self.file_name,"w") as f:
             f.write(r)
         return True
-
-    def visualise(self,against):
-        cols=list(mplc.CSS4_COLORS)
-        random.shuffle(cols)
-        x=self.read(against)
-        count=0
-        for c in self.columns():
-            if c!=against:
-                plt.plot(x, self.read(c),color=cols[count],label=c)
-                count+=1
-        # when you want to give a label
-        plt.xlabel(against)
-        plt.ylabel('y')
-        plt.legend()
-        plt.show()
 
     def columns(self):
         f=open(self.file_name,"r")

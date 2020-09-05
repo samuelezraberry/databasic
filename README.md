@@ -36,7 +36,6 @@ myNewTable.read("things")
 # returns ['apple','cat']
 
 myNewTable.destroy()
-
 # deletes table
 
 ```

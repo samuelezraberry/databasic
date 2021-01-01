@@ -12,29 +12,33 @@ import databasic as dbsc
 myNewTable=dbsc.table("mynewtable")
 
 # write random items to column "things"
-myNewTable.write("things","apple")
-myNewTable.write("things","banana")
-myNewTable.write("things","cat")
+myNewTable.append("things","apple")
+myNewTable.append("things","banana")
+myNewTable.append("things","cat")
 
-myNewTable.read("things")
+print(myNewTable.getColumn("things"))
 # returns ['apple', 'banana', 'cat']
 
-myNewTable.write("colours","green")
-myNewTable.write("colours","yellow")
-myNewTable.write("colours","black")
+myNewTable.append("colours","green")
+myNewTable.append("colours","yellow")
+myNewTable.append("colours","black")
 
-myNewTable.columns()
+print(myNewTable.headers())
 # returns ['things','colours']
 
-myNewTable.length('things')
+print(myNewTable.columnSize('things'))
 # returns 2
 
-print(myNewTable.read("things")[0],myNewTable.read("colours")[0])
+print(myNewTable.getColumn("things")[0],myNewTable.getColumn("colours")[0])
 # prints "apple, green"
 
 myNewTable.remove("things",1)
-myNewTable.read("things")
+
+myNewTable.getColumn("things")
 # returns ['apple','cat']
+
+myNewTable.exportCSV("my.csv")
+# exports to csv
 
 myNewTable.destroy()
 # deletes table

@@ -1,53 +1,50 @@
 import os
+import csv
 class table:
-    def __init__(self, table_name):
-        self.tabe_name=table_name
-        self.file_name=table_name+".dbs"
-        with open(self.file_name, 'a'):
-            pass
+    def __init__(self, path):
+        self.file_name=path
 
-    def read(self,column):
+    def getColumn(self,column):
         f=open(self.file_name,"r")
         lines=f.readlines()
         columns=[]
-        for l in lines:
-            ls=l.split("|")
-            if ls[0]==column:
-                x=ls[1].strip("\n")
+        for line in lines:
+            lineSplit=line.split("|") # split the line over the divider character
+            if lineSplit[0]==column:
+                data="|".join(lineSplit[1:]).strip("\n") # data is everything after the first "|" in the string
                 try:
-                    x=int(x)
+                    data=int(data) # try to parse the data as integer, else keep as string
                 except:
                     pass
-                columns.append(x)
-        f.close()
+                columns.append(data)
+        f.close() # close the file
         return columns
 
-    def length(self,column):
-        return len(self.read(column))
+    def columnSize(self,column):
+        return len(self.getColumn(column))
 
-    def write(self,column,content):
-        try:
-            column=sanitize(column);content=sanitize(content)
-            with open(self.file_name, 'a') as f:
-                f.write(column+"|"+content+"\n")
-            return True
-        except:
-            raise
-            return False
+    def append(self,column,content):
+        with open(self.file_name, 'a') as f:
+            f.write(column+"|"+content+"\n")
 
     def destroy(self):
         os.remove(self.file_name)
 
-    def remove(self,column,index):
-        rows=self.read(column)
-        fr=open(self.file_name,"r")
-        r=fr.read()
-        r=r.replace(column+"|"+rows[index]+"\n","")
-        with open(self.file_name,"w") as f:
-            f.write(r)
-        return True
+    def overwrite(self,fullTable):
+        headers=self.headers()
+        with open(self.file_name, 'w') as f:
+            for i in range(len(fullTable)):
+                h=headers[i]
+                for row in fullTable[i]:
+                    f.write("{0}|{1}\n".format(h,row))
 
-    def columns(self):
+    def remove(self,column,itemIndex):
+        fullTable=self.readTable()
+        columnIndex=self.headers().index(column)
+        del fullTable[columnIndex][itemIndex]
+        self.overwrite(fullTable)
+
+    def headers(self):
         f=open(self.file_name,"r")
         lines=f.readlines()
         columns=[]
@@ -58,5 +55,37 @@ class table:
         f.close()
         return columns
 
-def sanitize(s):
-    return str(s).replace("|","¦")
+    def readTable(self):
+        fullTable=[]
+        for h in self.headers():
+            fullTable.append(self.getColumn(h))
+        return fullTable
+
+    def longestColumn(self):
+        n=0
+        longestLen=0
+        longestColumn=0
+        for col in self.readTable():
+            l=len(col)
+            if l>longestLen:
+                longestLen=l
+                longestColumn=n
+            n+=1
+        return self.headers()[longestColumn]
+
+    def exportCSV(self,outfile):
+        f=open(outfile,"w")
+        headers=self.headers()
+        fullTable=self.readTable()
+        with open(outfile, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            longest=len(self.getColumn(self.longestColumn()))
+            writer.writerow(headers)
+            for i in range(longest):
+                row=[]
+                for c in fullTable:
+                    try:
+                        row.append(c[i])
+                    except:
+                        row.append("")
+                writer.writerow(row)
